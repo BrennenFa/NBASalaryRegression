@@ -1,8 +1,12 @@
 install.packages('rvest')
-install.packages("dplyr")
+install.packages('dplyr')
+install.packages('ggplot2')
+
 
 library('rvest')
 library('dplyr')
+library('ggplot2')
+
 
 #create per game table
 perGame <- "https://www.basketball-reference.com/teams/ORL/2024.html"
@@ -38,6 +42,6 @@ str(salaryTable)
 
 
 
-magicTable <- inner_join(perGameTable, salaryTable, by = c("Player", "Age"))
-print(magicTable)
-
+leagueTable <- inner_join(perGameTable, salaryTable, by = c("Player", "Age"))
+plot <- ggplot(data=magicTable, aes(x=MP, y=Guaranteed)) + geom_point()+geom_smooth()
+plot

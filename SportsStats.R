@@ -100,7 +100,7 @@ leagueTable <- leagueTable[!is.na(leagueTable$Player),]
 
 #changing factors to numeric
 names <- select(leagueTable, Player)
-leagueTable <- select(leagueTable, `Current Year Salary`, Age, MP, PTS, AST, TRB, TOV, PCT)
+leagueTable <- select(leagueTable, `Current Year Salary`, Age, MP, PTS, AST, TRB, TOV, PCT, G, GS)
 leagueTable <- sapply(leagueTable, as.numeric)
 leagueTable <- as.data.frame(leagueTable)
 leagueTable <- cbind(names, leagueTable)
@@ -119,7 +119,7 @@ plotAGE
 
 #organizing training and testing data
 sampleSize <- floor(0.75 * nrow(leagueTable))
-set.seed(12)
+set.seed(112)
 train_ind <- sample(seq_len(nrow(leagueTable)), size = sampleSize)
 
 training <- leagueTable[train_ind, ]
@@ -127,22 +127,40 @@ testing <- leagueTable[-train_ind, ]
 
 
 #machine learning model
-salaryPredictor <- randomForest(`Current Year Salary` ~ Age + MP + PTS + AST + TRB + TOV + PCT,
+salaryPredictor <- randomForest(`Current Year Salary` ~ Age + MP + PTS + AST + TRB + TOV + PCT + GS,
                                 data= training,
-                                ntree=201)      
+                                ntree=1001,
+                                mtry = 10)      
 salaryPredictor
 plot(salaryPredictor)
 
+#Test the testing data
 predictions <- predict(salaryPredictor, newdata = testing)
 
 mse <- mean((testing$`Current Year Salary` - predictions)^2)
 rmse <- sqrt(mse)  
 r_squared <- 1 - (sum((testing$`Current Year Salary` - predictions)^2) / sum((testing$`Current Year Salary` - mean(testing$`Current Year Salary`))^2))
 
+print("Training Data Results")
 cat("Mean Squared Error (MSE):", mse, "\n")
 cat("Root Mean Squared Error (RMSE):", rmse, "\n")
 cat("R-squared:", r_squared, "\n")
 
+
+#test all the data
+predictions <- predict(salaryPredictor, newdata = leagueTable)
+
+mse <- mean((leagueTable$`Current Year Salary` - predictions)^2)
+rmse <- sqrt(mse)  
+r_squared <- 1 - (sum((leagueTable$`Current Year Salary` - predictions)^2) / sum((leagueTable$`Current Year Salary` - mean(testing$`Current Year Salary`))^2))
+
+print("All Data Results")
+cat("Mean Squared Error (MSE):", mse, "\n")
+cat("Root Mean Squared Error (RMSE):", rmse, "\n")
+cat("R-squared:", r_squared, "\n")
+
+
+#create a table for excel
 `Predicted Salary` <- predict(salaryPredictor, newdata = leagueTable)
 Residual <- leagueTable$`Current Year Salary` - `Predicted Salary`
 
@@ -150,8 +168,3 @@ residualTable <- cbind(leagueTable, `Predicted Salary`, Residual)
 residualTable <- select(residualTable, Player, `Current Year Salary`, `Predicted Salary`, Residual)
 residualTable <- transform(residualTable, `Percent of Salary Off` = Residual/`Current Year Salary`)
 write_xlsx(residualTable, "residualTable.xlsx")
-
-
-
-
-

@@ -148,7 +148,7 @@ Residual <- leagueTable$`Current Year Salary` - `Predicted Salary`
 
 residualTable <- cbind(leagueTable, `Predicted Salary`, Residual)
 residualTable <- select(residualTable, Player, `Current Year Salary`, `Predicted Salary`, Residual)
-
+residualTable <- transform(residualTable, `Percent of Salary Off` = Residual/`Current Year Salary`)
 write_xlsx(residualTable, "residualTable.xlsx")
 
 

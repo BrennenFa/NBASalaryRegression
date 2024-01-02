@@ -143,11 +143,11 @@ cat("Mean Squared Error (MSE):", mse, "\n")
 cat("Root Mean Squared Error (RMSE):", rmse, "\n")
 cat("R-squared:", r_squared, "\n")
 
-leaguePredictions <- predict(salaryPredictor, newdata = leagueTable)
-Residual <- leagueTable$`Current Year Salary` - leaguePredictions
+`Predicted Salary` <- predict(salaryPredictor, newdata = leagueTable)
+Residual <- leagueTable$`Current Year Salary` - `Predicted Salary`
 
-residualTable <- cbind(leagueTable, Residual)
-residualTable <- select(residualTable, Player, `Current Year Salary`, Residual)
+residualTable <- cbind(leagueTable, `Predicted Salary`, Residual)
+residualTable <- select(residualTable, Player, `Current Year Salary`, `Predicted Salary`, Residual)
 
 write_xlsx(residualTable, "residualTable.xlsx")
 

@@ -167,5 +167,5 @@ write_xlsx(residualTable, "residualTable.xlsx")
 
 graphTable <- data.frame(Point = 1:nrow(residualTable), select(residualTable, `Percent.of.Salary.Off`))
 
-plotML <- ggplot(data=graphTable, aes(x=Point, y=`Percent.of.Salary.Off`)) + geom_point()+geom_smooth()
-plotML
+plotMLR <- ggplot(data=graphTable, aes(x=Point, y=`Percent.of.Salary.Off`)) + geom_point()+geom_smooth()
+plotMLR

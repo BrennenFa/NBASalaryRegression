@@ -1,8 +1,8 @@
-install.packages('rvest')
-install.packages('dplyr')
-install.packages('ggplot2')
-install.packages('randomForest')
-install.packages('writexl')
+#install.packages('rvest')
+#install.packages('dplyr')
+#install.packages('ggplot2')
+#install.packages('randomForest')
+#install.packages('writexl')
 
 
 library('rvest')
@@ -106,9 +106,6 @@ leagueTable <- as.data.frame(leagueTable)
 leagueTable <- cbind(names, leagueTable)
 
 
-
-
-
 plotMP <- ggplot(data=leagueTable, aes(x=MP, y=`Current Year Salary`)) + geom_point()+geom_smooth()
 plotPTS <- ggplot(data=leagueTable, aes(x=PTS, y=`Current Year Salary`)) + geom_point()+geom_smooth()
 plotAGE <- ggplot(data=leagueTable, aes(x=Age, y=`Current Year Salary`)) + geom_point()+geom_smooth()
@@ -121,7 +118,6 @@ plotAGE
 sampleSize <- floor(0.75 * nrow(leagueTable))
 set.seed(112)
 train_ind <- sample(seq_len(nrow(leagueTable)), size = sampleSize)
-
 training <- leagueTable[train_ind, ]
 testing <- leagueTable[-train_ind, ]
 
@@ -168,3 +164,8 @@ residualTable <- cbind(leagueTable, `Predicted Salary`, Residual)
 residualTable <- select(residualTable, Player, `Current Year Salary`, `Predicted Salary`, Residual)
 residualTable <- transform(residualTable, `Percent of Salary Off` = Residual/`Current Year Salary`)
 write_xlsx(residualTable, "residualTable.xlsx")
+
+graphTable <- data.frame(Point = 1:nrow(residualTable), select(residualTable, `Percent.of.Salary.Off`))
+
+plotML <- ggplot(data=graphTable, aes(x=Point, y=`Percent.of.Salary.Off`)) + geom_point()+geom_smooth()
+plotML
